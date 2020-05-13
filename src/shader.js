@@ -158,25 +158,50 @@ Shader.prototype = {
         value = value.m;
       }
       if (isArray(value)) {
-        switch (value.length) {
-          case 1: gl.uniform1fv(location, new Float32Array(value)); break;
-          case 2: gl.uniform2fv(location, new Float32Array(value)); break;
-          case 3: gl.uniform3fv(location, new Float32Array(value)); break;
-          case 4: gl.uniform4fv(location, new Float32Array(value)); break;
-          // Matrices are automatically transposed, since WebGL uses column-major
-          // indices instead of row-major indices.
-          case 9: gl.uniformMatrix3fv(location, false, new Float32Array([
-            value[0], value[3], value[6],
-            value[1], value[4], value[7],
-            value[2], value[5], value[8]
-          ])); break;
-          case 16: gl.uniformMatrix4fv(location, false, new Float32Array([
-            value[0], value[4], value[8], value[12],
-            value[1], value[5], value[9], value[13],
-            value[2], value[6], value[10], value[14],
-            value[3], value[7], value[11], value[15]
-          ])); break;
-          default: throw new Error('don\'t know how to load uniform "' + name + '" of length ' + value.length);
+        if(value.length==0) throw new Error("uniform array '"+name+"' is empty");
+        if(isArray(value[0])) {
+            var dimensions = value[0].length;
+            var vals = new Float32Array(value.length * dimensions);
+            var k = 0;
+            for(i = 0; i < value.length; i++) {
+              for(j = 0; j < dimensions; j++) {
+                vals[k] = value[i][j];
+                k++;
+              }
+            }
+
+            switch(dimensions) {
+              case 2: gl.uniform2fv(location, vals); break;
+              case 3: gl.uniform3fv(location, vals); break;
+              case 4: gl.uniform4fv(location, vals); break;
+              case 9: gl.uniformMatrix3fv(location, false, vals); break;
+              case 16: gl.uniformMatrix4fv(location, false, vals); break;
+              default: throw new Error("Don't know how to set that kind of uniform yet");  
+            }
+
+        } else {
+          switch (value.length) {
+            
+            case 1: gl.uniform1fv(location, new Float32Array(value)); break;
+            case 2: gl.uniform2fv(location, new Float32Array(value)); break;
+            case 3: gl.uniform3fv(location, new Float32Array(value)); break;
+            case 4: gl.uniform4fv(location, new Float32Array(value)); break;
+            // Matrices are automatically transposed, since WebGL uses column-major
+            // indices instead of row-major indices.
+            case 9: gl.uniformMatrix3fv(location, false, new Float32Array([
+              value[0], value[3], value[6],
+              value[1], value[4], value[7],
+              value[2], value[5], value[8]
+            ])); break;
+            case 16: gl.uniformMatrix4fv(location, false, new Float32Array([
+              value[0], value[4], value[8], value[12],
+              value[1], value[5], value[9], value[13],
+              value[2], value[6], value[10], value[14],
+              value[3], value[7], value[11], value[15]
+            ])); break;
+            default: 
+              throw new Error('don\'t know how to load uniform "' + name + '" of length ' + value.length);
+          }
         }
       } else if (isNumber(value)) {
         (this.isSampler[name] ? gl.uniform1i : gl.uniform1f).call(gl, location, value);

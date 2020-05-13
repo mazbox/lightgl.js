@@ -2,7 +2,7 @@
 
 module = 'GL'
 input_path = 'src/'
-output_path = 'lightgl.js'
+output_path = '../www/lightgl.js'
 
 import re, os, sys, time, tempfile
 
