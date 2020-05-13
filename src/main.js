@@ -304,6 +304,45 @@ function addEventListeners() {
     buttons = {};
     hasOld = false;
   }
+
+
+  // touch events
+  function touchstart(e) {
+    gl = context;
+    if(gl.touchstart) gl.touchstart(e);
+    //e.preventDefault();
+  }
+
+  function touchmove(e) {
+    gl = context;
+    if(gl.touchmove) gl.touchmove(e);
+    e.preventDefault();
+  }
+
+  function touchend(e) {
+    gl = context;
+    if(gl.touchend) gl.touchend(e);
+    e.preventDefault();
+  }
+
+  function touchcancel(e) {
+    gl = context;
+    if(gl.touchcancel) gl.touchcancel(e);
+    e.preventDefault();
+  }
+  
+
+    on(document.body, "touchstart", touchstart);
+
+    on(gl.canvas, "touchend", touchend);
+    on(gl.canvas, "touchcancel", touchcancel);
+    on(gl.canvas, "touchmove", touchmove);
+
+
+
+
+
+
   on(gl.canvas, 'mousedown', mousedown);
   on(gl.canvas, 'mousemove', mousemove);
   on(gl.canvas, 'mouseup', mouseup);
