@@ -471,6 +471,19 @@ function addOtherMethods() {
     function resize() {
       gl.canvas.width = window.innerWidth - left - right;
       gl.canvas.height = window.innerHeight - top - bottom;
+
+
+      var hh = document.body.clientWidth * window.innerHeight/window.innerWidth;
+      var w = document.body.clientWidth - left - right;
+      var h = hh - top - bottom;
+
+      gl.canvas.width = w;
+      gl.canvas.height = h;
+      
+
+
+
+
       gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
       if (options.camera || !('camera' in options)) {
         gl.matrixMode(gl.PROJECTION);
